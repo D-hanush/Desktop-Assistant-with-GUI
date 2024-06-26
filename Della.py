@@ -22,13 +22,15 @@ from MYui import Ui_Myui
 # Initialize the speech engine
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id)
+engine.setProperty('voice', voices[1].id)  # Setting the voice to the second available voice
 
 def speak(audio):
+    """Function to make the assistant speak"""
     engine.say(audio)
     engine.runAndWait()
 
 def wishMe():
+    """Function to greet the user based on the time of day"""
     hour = int(datetime.datetime.now().hour)
     if hour >= 0 and hour < 12:
         speak("Good Morning!")
@@ -39,6 +41,7 @@ def wishMe():
     speak("I am Della. Please tell me how may I help you.")
 
 class MainThread(QThread):
+    # Define custom signals
     update_ui_signal = pyqtSignal(str)
     close_app_signal = pyqtSignal()
 
@@ -46,9 +49,11 @@ class MainThread(QThread):
         super(MainThread, self).__init__()
 
     def run(self):
+        """Main thread run method to start task execution"""
         self.TaskExecution()
 
     def takeCommand(self):
+        """Function to take voice command from the user"""
         r = sr.Recognizer()
         with sr.Microphone() as source:
             print("Listening...")
@@ -64,6 +69,7 @@ class MainThread(QThread):
         return query
 
     def get_news(self, api_key):
+        """Function to fetch and speak top news headlines"""
         newsapi = NewsApiClient(api_key=api_key)
         top_headlines = newsapi.get_top_headlines(language='en', country='us')
         if top_headlines['status'] == 'ok':
@@ -77,16 +83,18 @@ class MainThread(QThread):
             speak("Sorry, I couldn't fetch the news at the moment.")
 
     def PlayYoutube(self, query):
+        """Function to play a video on YouTube"""
         search_term = query.replace("play ", "").replace(" on youtube", "")
         speak("Playing " + search_term + " on YouTube")
         kit.playonyt(search_term)
 
     def TaskExecution(self):
+        """Main function to execute various tasks based on voice commands"""
         wishMe()
         while True:
             query = self.takeCommand().lower()
 
-            if "tell me about" in query or "Who is" in query:
+            if "tell me about" in query:
                 topic = query.replace("tell me about", "").strip()
                 url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{topic}"
                 r = requests.get(url)
@@ -115,7 +123,7 @@ class MainThread(QThread):
 
             elif 'the date' in query:
                 strDate = datetime.datetime.now().strftime("%Y-%m-%d")
-                print(f"Todays date is {strDate}")
+                print(f"Today's date is {strDate}")
                 speak(f"Today's date is {strDate}")
 
             elif 'play' in query:
@@ -131,7 +139,7 @@ class MainThread(QThread):
                 pyautogui.press("volumemute")
 
             elif "news" in query:
-                api_key = '1***************************4' #Add your api_key 
+                api_key = 'your_api_key'  # Add your api_key
                 self.get_news(api_key)
 
             elif 'open' in query:
@@ -153,19 +161,19 @@ class MainThread(QThread):
                 speak(joke)
 
             elif "send message" in query:
-                print("Sir what should i send in message")
-                speak("Sir what should i send in message")
+                print("Sir what should I send in message")
+                speak("Sir what should I send in message")
                 msz = self.takeCommand()
 
-                account_sid = 'A************************4' #Add your account_sid
-                auth_token = 'b************************c' #Add your auth_token
+                account_sid = 'your_account_sid'  # Add your account_sid
+                auth_token = 'your_auth_token'  # Add your auth_token
 
                 client = Client(account_sid, auth_token)
 
                 message = client.messages.create(
                     body=msz,
                     from_='+13312444914',
-                    to='+91*********7' #add your number
+                    to='+91**********'  # Add your number
                 )
 
                 print(f"Message sent with SID {message.sid}")
@@ -173,15 +181,15 @@ class MainThread(QThread):
 
             elif "make a call" in query:
                 speak("Making Call ")
-                account_sid = 'A***************************4' #Add your account_sid
-                auth_token = 'b**************************c' #Add your auth_token
+                account_sid = 'your_account_sid'  # Add your account_sid
+                auth_token = 'your_auth_token'  # Add your auth_token
 
                 client = Client(account_sid, auth_token)
 
                 message = client.calls.create(
-                    twiml='<Response><Say>This is the second message from  Della..</Say></Response>',
+                    twiml='<Response><Say>This is the second message from Della..</Say></Response>',
                     from_='+13312444914',
-                    to='+91**********1' Add your number
+                    to='+91**********'  # Add your number
                 )
 
             elif "my ip address" in query:
@@ -224,35 +232,38 @@ class MainThread(QThread):
 
             speak("Is there anything else I can help you with?")
 
-
+# Start the main execution thread
 startExecution = MainThread()
 
 class Main(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.ui = Ui_Myui()
+        self.ui = Ui_Myui()  # Load the UI from MYui
         self.ui.setupUi(self)
+        # Connect buttons to functions
         self.ui.pushButton.clicked.connect(self.startTask)
         self.ui.pushButton_2.clicked.connect(self.close)
+        # Connect custom signals to functions
         startExecution.update_ui_signal.connect(self.updateUI)
         startExecution.close_app_signal.connect(self.close_app)
 
     def startTask(self):
-        self.ui.movie = QMovie("C:/Users/HP/Music/DellaGUI\Loading.gif")
+        """Function to start the task and show loading gif"""
+        self.ui.movie = QMovie("C:/Users/HP/Music/DellaGUI/Loading.gif")
         self.ui.label.setMovie(self.ui.movie)
         self.ui.movie.start()
         startExecution.start()
 
     def updateUI(self, message):
+        """Function to update the UI label"""
         self.ui.label.setText(message)
 
     def close_app(self):
+        """Function to close the application"""
         self.close()
 
+# Initialize the Qt application and run the main window
 app = QApplication(sys.argv)
 Della = Main()
 Della.show()
 sys.exit(app.exec_())
-
-
-
