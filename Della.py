@@ -131,7 +131,7 @@ class MainThread(QThread):
                 pyautogui.press("volumemute")
 
             elif "news" in query:
-                api_key = '1fb87edaead94ac7b8243ec0b0423894'
+                api_key = '1***************************4' #Add your api_key 
                 self.get_news(api_key)
 
             elif 'open' in query:
@@ -157,15 +157,15 @@ class MainThread(QThread):
                 speak("Sir what should i send in message")
                 msz = self.takeCommand()
 
-                account_sid = 'AC57eeccf5fed322714783bfcd876b4bc4'
-                auth_token = 'b4cca2b3729e493142e88e700bd6fddc'
+                account_sid = 'A************************4' #Add your account_sid
+                auth_token = 'b************************c' #Add your auth_token
 
                 client = Client(account_sid, auth_token)
 
                 message = client.messages.create(
                     body=msz,
                     from_='+13312444914',
-                    to='+917618730921'
+                    to='+91*********7' #add your number
                 )
 
                 print(f"Message sent with SID {message.sid}")
@@ -173,15 +173,15 @@ class MainThread(QThread):
 
             elif "make a call" in query:
                 speak("Making Call ")
-                account_sid = 'AC57eeccf5fed322714783bfcd876b4bc4'
-                auth_token = 'b4cca2b3729e493142e88e700bd6fddc'
+                account_sid = 'A***************************4' #Add your account_sid
+                auth_token = 'b**************************c' #Add your auth_token
 
                 client = Client(account_sid, auth_token)
 
                 message = client.calls.create(
                     twiml='<Response><Say>This is the second message from  Della..</Say></Response>',
                     from_='+13312444914',
-                    to='+917618730921'
+                    to='+91**********1' Add your number
                 )
 
             elif "my ip address" in query:
