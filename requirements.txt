@@ -1,0 +1,12 @@
+speech_recognition
+pyttsx3
+pyjokes
+wikipedia
+pywhatkit
+requests
+beautifulsoup4
+pyautogui
+twilio
+newsapi-python
+pywikihow
+PyQt5
